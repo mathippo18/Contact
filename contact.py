@@ -41,20 +41,34 @@ def man():
     print("'python3 contact.py search --by-firstname' permet de rechercher un contact en fonction de son prénom")
     
 
-#def select_number():
+def search(zone, rechercher):
+    result = "test"
+    try:
+        if zone == "Nom":
+            select = '''Select * from Contact WHERE Nom = (?) '''
+        if zone == "Prénom":
+            select = '''Select * from Contact WHERE Prénom = (?) '''
+        if zone == "Téléphone":
+            select = '''Select * from Contact WHERE Nom = (?) '''
+        if zone == "Surnom":
+            select = '''Select * from Contact WHERE Surnom = (?) '''
+        if zone == "Email":
+            select = '''Select * from Contact WHERE Email = (?) '''
+        if zone == "Adresse":
+            select = '''Select * from Contact WHERE Adresse = (?)'''
+        rechercher = (rechercher)
+        result = cur.execute(select, rechercher)
+        result = cur.fetchall()
+        print(result)
+        conn.commit()
+        cur.close()
+        conn.close()
+    except sqlite3.Error as error:
+        print("Petit soucis !", error)
 
-#def select_email():
 
-#def select_firstname():
-
-#def select_name():
-
-#def select_nickname():
-
-#def select_adresse():
 
 def supprimer(Nom, Prenom, Surnom, Telephone, Email, Adresse):
-
     try:
         Delete ='''Delete from Contact where Nom = ? AND Prénom = ? AND Surnom = ? AND Téléphone=? AND Email=? AND Adresse=? '''
         Suppr = (Nom, Prenom, Surnom, Telephone, Email, Adresse)
@@ -130,27 +144,26 @@ for arg in sys.argv:
             Adresse= input("Quel est l'adresse de votre contact a mettre a jour : ")
             maj(Loca_update, New_data, Nom, Prenom, Surnom, Telephone, Email, Adresse)
             break
+        
         if sys.argv[1] == "search":
             try:
+                rechercher = sys.argv[3]
                 if sys.argv[2] == "--by-name" :
-                    print("Par nom")
-        
+                    zone = "Nom"
                 if sys.argv[2] == "--by-tel" :
-                    print("Par téléphone")
-
+                    zone = "Téléphone"
                 if sys.argv[2] == "--by-email" :
-                    print("Par mail")
-
+                    zone = "Email"
                 if sys.argv[2] == "--by-nickname" :
-                    print("Par surnom")
-
+                    zone = "Surnom"
                 if sys.argv[2] == "--by-firstname" :
-                    print("Par prénom")
-
+                    zone = "Prénom"
                 if sys.argv[2] == "--by-address" :
-                    print("Par nom")
+                    zone = "Adresse"
+                search(zone, rechercher)
             except:
-                print ("Veuillez respecter les commandes ou veuillez entrer dans le mode intéractif ")
+                    print ("Veuillez respecter les commandes ou veuillez entrer dans le mode intéractif ")
+            break
     except:
         print("Bienvenue dans le mode intéractif ")
         print("Tapez 1 pour ajouter un contact ")
@@ -173,8 +186,11 @@ for arg in sys.argv:
         if choix == "2":    
             list()
             break
-        #if choix == "3":
-            #search
+        if choix == "3":
+            zone = input("Quel est la zone de recherche (Nom/Prénom/Surnom/Téléphone/Email/Adresse) : ")
+            rechercher = input("Quel est le texte que vous recherchez ? ")
+            search(zone, rechercher)
+            break
         if choix =="4":
             man()
             break
