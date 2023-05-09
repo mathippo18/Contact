@@ -1,5 +1,8 @@
 import sys
 import sqlite3
+import re
+format_tel = "[0][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]"
+format_email = "^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$"
 conn = sqlite3.connect('Contact.db')
 cur = conn.cursor()
 
@@ -9,6 +12,7 @@ def Insert_into(Nom,Prenom,Surnom,Telephone,Email,Adresse):
         inserer = (Nom, Prenom, Surnom, Telephone, Email, Adresse)
         cur.execute(Insert_clients, inserer)
         conn.commit()
+        print("Insertion réussie")
     except sqlite3.Error as error:
         print("Petit soucis !", error)
 
@@ -42,18 +46,18 @@ def man():
 def search(zone, rechercher):
     try:
         if zone == "Nom":
-            select = '''Select * from Contact WHERE Email = ?'''
+            select = "Select * from Contact WHERE Nom LIKE ?"
         if zone == "Prénom":
-            select = '''Select * from Contact WHERE Email = ?'''
+            select = "Select * from Contact WHERE Prénom LIKE ?"
         if zone == "Téléphone":
-            select = '''Select * from Contact WHERE Email = ?'''
+            select = "Select * from Contact WHERE Téléphone LIKE ?"
         if zone == "Surnom":
-            select = '''Select * from Contact WHERE Email = ?'''
+            select = "Select * from Contact WHERE Surnom LIKE ?"
         if zone == "Email":
-            select = '''Select * from Contact WHERE Email = ?'''
+            select = "Select * from Contact WHERE Email LIKE ?"
         if zone == "Adresse":
-            select = '''Select * from Contact WHERE Email = ?'''
-        utile = (rechercher, )
+            select = "Select * from Contact WHERE Adresse LIKE ?"
+        utile = ('%'+rechercher+'%', )
         result = cur.execute(select, utile)
         result = cur.fetchall()
         print(result)
@@ -80,6 +84,22 @@ def intéract():
             Telephone= input('Quel est le numéro de téléphone de votre contact : ')
             Email = input('Quel est le mail de votre contact : ')
             Adresse= input("Quel est l'adresse de votre contact : ")
+            try: 
+                Telephone_test = re.match(format_tel, Telephone)
+                while Telephone_test == None:
+                    print("Respecter la norme d'input : 0x-xx-xx-xx-xx")
+                    Telephone = input('Quel est le numéro de téléphone de votre contact : ')
+                    Telephone_test = re.match(format_tel, Telephone)
+            except:
+                print("")
+            try: 
+                Email_test = re.match(format_email, Email)
+                while Email_test == None:
+                    print("Respecter la norme d'input : test@test.com")
+                    Telephone = input('Quel est le mail de votre contact : ')
+                    Telephone_test = re.match(format_email, Email)
+            except:
+                print("")
             Insert_into(Nom,Prenom,Surnom,Telephone,Email,Adresse)
             print("Insertion réussie")
             print("\n")
@@ -118,6 +138,22 @@ def intéract():
             Telephone= input('Quel est le numéro de téléphone de votre contact a mettre a jour : ')
             Email= input('Quel est le mail de votre contact a mettre a jour : ')
             Adresse= input("Quel est l'adresse de votre contact a mettre a jour : ")
+            try: 
+                Telephone_test = re.match(format_tel, Telephone)
+                while Telephone_test == None:
+                    print("Respecter la norme d'input : 0x-xx-xx-xx-xx")
+                    Telephone = input('Quel est le numéro de téléphone de votre contact : ')
+                    Telephone_test = re.match(format_tel, Telephone)
+            except:
+                print("")
+            try: 
+                Email_test = re.match(format_email, Email)
+                while Email_test == None:
+                    print("Respecter la norme d'input : test@test.com")
+                    Telephone = input('Quel est le mail de votre contact : ')
+                    Telephone_test = re.match(format_email, Email)
+            except:
+                print("")
             maj(Loca_update, New_data, Nom, Prenom, Surnom, Telephone, Email, Adresse)
             print("\n")
             print("\n")
@@ -128,6 +164,7 @@ def supprimer(Nom, Prenom, Surnom, Telephone, Email, Adresse):
         Suppr = (Nom, Prenom, Surnom, Telephone, Email, Adresse)
         cur.execute(Delete, Suppr)
         conn.commit()  
+        print("Suppression réussie")
     except sqlite3.Error as error:
         print("Petit soucis !", error)
 
@@ -160,8 +197,23 @@ for arg in sys.argv:
             Telephone= input('Quel est le numéro de téléphone de votre contact : ')
             Email= input('Quel est le mail de votre contact ')
             Adresse= input("Quel est l'adresse de votre contact ")
+            try: 
+                Telephone_test = re.match(format_tel, Telephone)
+                while Telephone_test == None:
+                    print("Respecter la norme d'input : 0x-xx-xx-xx-xx")
+                    Telephone = input('Quel est le numéro de téléphone de votre contact : ')
+                    Telephone_test = re.match(format_tel, Telephone)
+            except:
+                print("")
+            try: 
+                Email_test = re.match(format_email, Email)
+                while Email_test == None:
+                    print("Respecter la norme d'input : test@test.com")
+                    Telephone = input('Quel est le mail de votre contact : ')
+                    Telephone_test = re.match(format_email, Email)
+            except:
+                print("")
             Insert_into(Nom,Prenom,Surnom,Telephone,Email,Adresse)
-            print("Insertion réussie")
             break
               
 
@@ -180,7 +232,6 @@ for arg in sys.argv:
             Email= input('Quel est le mail de votre contact :')
             Adresse= input("Quel est l'adresse de votre contact :")
             supprimer(Nom,Prenom,Surnom,Telephone,Email,Adresse)
-            print("Suppression réussie")
             break
             
         if sys.argv[1] == "update":
@@ -192,6 +243,22 @@ for arg in sys.argv:
             Telephone= input('Quel est le numéro de téléphone de votre contact a mettre a jour : ')
             Email= input('Quel est le mail de votre contact a mettre a jour : ')
             Adresse= input("Quel est l'adresse de votre contact a mettre a jour : ")
+            try: 
+                Telephone_test = re.match(format_tel, Telephone)
+                while Telephone_test == None:
+                    print("Respecter la norme d'input : 0x-xx-xx-xx-xx")
+                    Telephone = input('Quel est le numéro de téléphone de votre contact : ')
+                    Telephone_test = re.match(format_tel, Telephone)
+            except:
+                print("")
+            try: 
+                Email_test = re.match(format_email, Email)
+                while Email_test == None:
+                    print("Respecter la norme d'input : test@test.com")
+                    Telephone = input('Quel est le mail de votre contact : ')
+                    Telephone_test = re.match(format_email, Email)
+            except:
+                print("")
             maj(Loca_update, New_data, Nom, Prenom, Surnom, Telephone, Email, Adresse)
             break
         
@@ -212,7 +279,7 @@ for arg in sys.argv:
                     zone = "Adresse"
                 search(zone, rechercher)
             except:
-                    print ("Veuillez respecter les commandes ou veuillez entrer dans le mode intéractif ")
+                    print ("Veuillez utiliser la commande 'python3 contact.py ?' ou veuillez entrer dans le mode intéractif ")
             break
     except:
             intéract()
