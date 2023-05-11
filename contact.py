@@ -5,6 +5,16 @@ format_tel = "[0][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]"
 format_email = "^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$"
 conn = sqlite3.connect('Contact.db')
 cur = conn.cursor()
+Table = '''CREATE TABLE IF NOT EXISTS "Contact" (
+	"Nom"	TEXT,
+	"Prénom"	TEXT,
+	"Surnom"	TEXT,
+	"Téléphone"	TEXT,
+	"Email"	TEXT,
+	"Adresse"	TEXT
+);'''
+cur.execute(Table)
+conn.commit()
 
 def Insert_into(Nom,Prenom,Surnom,Telephone,Email,Adresse):
     try:
@@ -21,7 +31,15 @@ def list(): #Changer le style
         sql = '''Select * from Contact'''
         result = cur.execute(sql)
         result = cur.fetchall()
-        print(result)
+        print("Il y a un total de ", len(result), "contacts")
+        for row in result:
+            print("\n")
+            print("Nom: ", row[0])
+            print("Prénom: ", row[1])
+            print("Surnom: ", row[2])
+            print("Téléphone: ", row[3])
+            print("Email: ", row[4])
+            print("Adresse: ", row[5])
         conn.commit()
     except sqlite3.Error as error:
         print("Petit soucis !", error)
@@ -44,6 +62,9 @@ def man():
     
 
 def search(zone, rechercher):
+    if rechercher == "":
+            print ("Veuillez utiliser la commande 'python3 contact.py ?' ou veuillez entrer dans le mode intéractif ")
+            exit()
     try:
         if zone == "Nom":
             select = "Select * from Contact WHERE Nom LIKE ?"
@@ -57,10 +78,19 @@ def search(zone, rechercher):
             select = "Select * from Contact WHERE Email LIKE ?"
         if zone == "Adresse":
             select = "Select * from Contact WHERE Adresse LIKE ?"
+
         utile = ('%'+rechercher+'%', )
         result = cur.execute(select, utile)
         result = cur.fetchall()
-        print(result)
+        print("Il y a un total de ", len(result), "contacts correspondant a votre recherche")
+        for row in result:
+            print("\n")
+            print("Nom: ", row[0])
+            print("Prénom: ", row[1])
+            print("Surnom: ", row[2])
+            print("Téléphone: ", row[3])
+            print("Email: ", row[4])
+            print("Adresse: ", row[5])
         conn.commit()
     except sqlite3.Error as error:
         print("Petit soucis !", error)
@@ -76,6 +106,7 @@ def intéract():
         print("Tapez 4 pour voir l'aide ")
         print("Tapez 5 pour supprimer un contact ")
         print("Tapez 6 pour modifier un contact ")
+        print("Tapez bye afin de quitter le programme ")
         choix = input("Que voulez vous faire ? : ")
         if choix == "1":
             Nom= input('Quel est le nom de votre contact : ')
@@ -96,8 +127,8 @@ def intéract():
                 Email_test = re.match(format_email, Email)
                 while Email_test == None:
                     print("Respecter la norme d'input : test@test.com")
-                    Telephone = input('Quel est le mail de votre contact : ')
-                    Telephone_test = re.match(format_email, Email)
+                    TEmail = input('Quel est le mail de votre contact : ')
+                    Email_test = re.match(format_email, Email)
             except:
                 print("")
             Insert_into(Nom,Prenom,Surnom,Telephone,Email,Adresse)
@@ -150,8 +181,8 @@ def intéract():
                 Email_test = re.match(format_email, Email)
                 while Email_test == None:
                     print("Respecter la norme d'input : test@test.com")
-                    Telephone = input('Quel est le mail de votre contact : ')
-                    Telephone_test = re.match(format_email, Email)
+                    Email = input('Quel est le mail de votre contact : ')
+                    Email_test = re.match(format_email, Email)
             except:
                 print("")
             maj(Loca_update, New_data, Nom, Prenom, Surnom, Telephone, Email, Adresse)
@@ -209,8 +240,8 @@ for arg in sys.argv:
                 Email_test = re.match(format_email, Email)
                 while Email_test == None:
                     print("Respecter la norme d'input : test@test.com")
-                    Telephone = input('Quel est le mail de votre contact : ')
-                    Telephone_test = re.match(format_email, Email)
+                    Email = input('Quel est le mail de votre contact : ')
+                    Email_test = re.match(format_email, Email)
             except:
                 print("")
             Insert_into(Nom,Prenom,Surnom,Telephone,Email,Adresse)
@@ -255,34 +286,35 @@ for arg in sys.argv:
                 Email_test = re.match(format_email, Email)
                 while Email_test == None:
                     print("Respecter la norme d'input : test@test.com")
-                    Telephone = input('Quel est le mail de votre contact : ')
-                    Telephone_test = re.match(format_email, Email)
+                    Email = input('Quel est le mail de votre contact : ')
+                    Email_test = re.match(format_email, Email)
             except:
                 print("")
             maj(Loca_update, New_data, Nom, Prenom, Surnom, Telephone, Email, Adresse)
             break
         
         if sys.argv[1] == "search":
-            rechercher = sys.argv[3]
             try:
-                if sys.argv[2] == "--by-name" :
-                    zone = "Nom"
-                if sys.argv[2] == "--by-tel" :
-                    zone = "Téléphone"
-                if sys.argv[2] == "--by-email" :
-                    zone = "Email"
-                if sys.argv[2] == "--by-nickname" :
-                    zone = "Surnom"
-                if sys.argv[2] == "--by-firstname" :
-                    zone = "Prénom"
-                if sys.argv[2] == "--by-address" :
-                    zone = "Adresse"
-                search(zone, rechercher)
+                rechercher = sys.argv[3]
             except:
                     print ("Veuillez utiliser la commande 'python3 contact.py ?' ou veuillez entrer dans le mode intéractif ")
+                    break
+            if sys.argv[2] == "--by-name" :
+                zone = "Nom"
+            if sys.argv[2] == "--by-tel" :
+                zone = "Téléphone"
+            if sys.argv[2] == "--by-email" :
+                zone = "Email"
+            if sys.argv[2] == "--by-nickname" :
+                zone = "Surnom"
+            if sys.argv[2] == "--by-firstname" :
+                zone = "Prénom"
+            if sys.argv[2] == "--by-address" :
+                zone = "Adresse"
+            search(zone, rechercher)
             break
     except:
-            intéract()
+        intéract()
         
    
 
