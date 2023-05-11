@@ -127,7 +127,7 @@ def intéract():
                 Email_test = re.match(format_email, Email)
                 while Email_test == None:
                     print("Respecter la norme d'input : test@test.com")
-                    TEmail = input('Quel est le mail de votre contact : ')
+                    Email = input('Quel est le mail de votre contact : ')
                     Email_test = re.match(format_email, Email)
             except:
                 print("")
